@@ -1,5 +1,9 @@
 import { PaginationOptions, UserRepository } from '..'
-import { User, UserStatus } from '../../../../domain/entities/user/user'
+import {
+  User,
+  UserStatus,
+  UserType,
+} from '../../../../domain/entities/user/user'
 import { Email } from '../../../../domain/models/email'
 
 import {
@@ -19,6 +23,9 @@ const _UserFromDynamoDB = (Item: {
   email: string
   name: string
   status: string
+  passwordHash: string
+  passwordSaltHash: string
+  userType: string
   created: string
   modified: string
   deletedAt?: string
@@ -28,6 +35,9 @@ const _UserFromDynamoDB = (Item: {
     email: new Email(Item.email),
     name: Item.name,
     status: Item.status as UserStatus,
+    hash: Item.passwordHash,
+    salt: Item.passwordSaltHash,
+    userType: Item.userType as UserType,
     createdAt: new Date(Item.created),
     modifiedAt: new Date(Item.modified),
     deletedAt: Item.deletedAt ? new Date(Item.deletedAt) : undefined,
@@ -53,6 +63,10 @@ export class UserDynamoDBRepository implements UserRepository {
     return _UserFromDynamoDB(Item)
   }
 
+  async getByEmail(email: Email) {
+    throw new Error('Method not implemented.')
+  }
+
   async list(opts: PaginationOptions = {}) {
     const { limit = 10, cursor: nextToken } = opts
     const { Items = [], LastEvaluatedKey } = await this.schema.query('USER#', {
@@ -72,6 +86,9 @@ export class UserDynamoDBRepository implements UserRepository {
       email: user.email.value,
       name: user.name,
       status: user.status,
+      passwordHash: user.hash,
+      passwordSaltHash: user.passwordSaltHash,
+      userType: user.userType,
       deletedAt: user.deletedAt?.toISOString(),
       created: user.createdAt.toISOString(),
       modified: user.modifiedAt.toISOString(),

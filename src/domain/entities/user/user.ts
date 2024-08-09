@@ -7,8 +7,19 @@ export const UserStatuses = {
   Active: 'ACTIVE',
   Deleted: 'DELETED',
 } as const
-
 export type UserStatus = (typeof UserStatuses)[keyof typeof UserStatuses]
+
+export const UserTypes = {
+  Customer: 'CUSTOMER',
+  Admin: 'ADMIN',
+  Consultant: 'CONSULTANT',
+} as const
+export type UserType = (typeof UserTypes)[keyof typeof UserTypes]
+
+export type Password = {
+  hash: string
+  salt: string
+}
 
 export const UserTypeSchema = T.Object({
   id: T.String(),
@@ -29,6 +40,8 @@ export type UserProps = {
   id?: string
   name: string
   email: Email
+  password: Password
+  userType: UserType
   status?: UserStatus
   createdAt?: Date
   modifiedAt?: Date
@@ -40,6 +53,8 @@ export class User {
   readonly createdAt: Date
   name: string
   email: Email
+  userType: UserType
+  password: Password
   status: UserStatus
   modifiedAt: Date
   deletedAt?: Date
@@ -48,6 +63,8 @@ export class User {
     this.id = props.id ?? `user_${shortUUID.generate()}`
     this.name = props.name
     this.email = props.email
+    this.userType = props.userType
+    this.password = props.password
     this.status = props.status ?? UserStatuses.Active
     this.createdAt = props.createdAt ?? new Date()
     this.modifiedAt = props.modifiedAt ?? new Date()

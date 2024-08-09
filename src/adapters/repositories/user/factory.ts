@@ -1,10 +1,11 @@
+import { UserRepository } from '.'
 import { ApplicationContext } from '../../../lib/app-ctx/app-ctx'
 import { ServiceDynamoDBClient } from '../../../lib/clients/dynamodb/dynamodb'
 import { UserSchemaFactory } from './dynamodb/ddb-schema'
 import { UserDynamoDBRepository } from './dynamodb/repository'
 
 export class UserRepositoryFactory {
-  instance(ctx: ApplicationContext) {
+  instance(ctx: ApplicationContext): UserRepository {
     return this.dynamodb(ctx)
   }
 
