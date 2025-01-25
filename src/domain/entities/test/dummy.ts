@@ -1,11 +1,16 @@
 import { Email } from '../../models/email'
-import { User, UserProps, UserStatuses } from '../user/user'
+import { User, UserProps, UserStatuses, UserTypes } from '../user/user'
 
-const BaseProps = () => ({
+const BaseProps = (): UserProps => ({
   name: 'John Doe',
   email: new Email('john@mail.com'),
   createdAt: new Date(),
   modifiedAt: new Date(),
+  userType: UserTypes.Consultant,
+  password: {
+    hash: 'foo',
+    salt: 'bar',
+  },
 })
 
 export const UserDummy = (partial: Partial<UserProps> = {}): User => {

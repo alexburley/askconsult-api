@@ -2,6 +2,10 @@ import { User } from '../../../../../domain/entities/user/user'
 import { UserRepository } from '../..'
 
 export class InMemoryUserRepository implements UserRepository {
+  getByEmail(): Promise<User> {
+    throw new Error('Method not implemented.')
+  }
+
   private users: User[] = []
 
   async getById(id: string) {

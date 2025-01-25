@@ -1,4 +1,4 @@
-import { testServer } from '../../../../../test/setup-after-env'
+import { testServer } from '../../../../../../test/setup-after-env'
 
 test('should create a user', async () => {
   const response = await testServer.inject({

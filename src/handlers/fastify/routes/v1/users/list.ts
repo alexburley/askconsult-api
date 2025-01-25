@@ -20,13 +20,10 @@ export const ListUsersRoute = async (fastify: ServiceFastifyInstance) =>
         },
       },
     },
-    async request => {
+    async () => {
       const repository = new UserRepositoryFactory().instance(fastify.appCtx)
 
-      const { collection: users, cursor } = await repository.list({
-        limit: request.query.limit,
-        cursor: request.query.cursor,
-      })
+      const { collection: users, cursor } = await repository.list()
 
       return {
         result: users.map(u => u.serialize()),
