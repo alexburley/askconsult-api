@@ -1,6 +1,6 @@
 import { Static, Type as T } from '@sinclair/typebox'
 import shortUUID from 'short-uuid'
-import { Email } from '../../../domain/models/email'
+import { Email } from '../../models/email'
 import { Nullable } from '../../../lib/json-schema'
 
 export const UserStatuses = {
