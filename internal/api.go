@@ -3,13 +3,17 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"log/slog"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 // User struct to represent user data
 type User struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
 
 type ListUsersHandler struct {
@@ -29,6 +33,7 @@ func (h *ListUsersHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var user User
 		if err := rows.Scan(&user.ID, &user.Name); err != nil {
+			slog.Info(fmt.Sprintf("err %s", err.Error()))
 			http.Error(w, "Error scanning user data", http.StatusInternalServerError)
 			return
 		}
@@ -56,9 +61,10 @@ func (h *CreateUserHandler) Handler(w http.ResponseWriter, r *http.Request) {
 
 	// Insert user into the database
 	query := `INSERT INTO users (name) VALUES ($1) RETURNING id`
-	var userID int
+	var userID uuid.UUID
 	err := h.DB.QueryRow(query, user.Name).Scan(&userID)
 	if err != nil {
+		slog.Info(fmt.Sprintf("err %s", err.Error()))
 		http.Error(w, "Failed to insert user", http.StatusInternalServerError)
 		return
 	}
