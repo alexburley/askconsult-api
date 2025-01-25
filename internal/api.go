@@ -8,12 +8,29 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 // User struct to represent user data
 type User struct {
 	ID   uuid.UUID `json:"id"`
 	Name string    `json:"name"`
+}
+
+type ServerDeps struct {
+	DB *sql.DB
+}
+
+func NewServer(deps ServerDeps) *mux.Router {
+	createUser := &CreateUserHandler{DB: deps.DB}
+	listUsers := &ListUsersHandler{DB: deps.DB}
+
+	// Set up router with dependency-injected handlers
+	r := mux.NewRouter()
+	r.HandleFunc("/users", createUser.Handler).Methods("POST")
+	r.HandleFunc("/users", listUsers.Handler).Methods("GET")
+
+	return r
 }
 
 type ListUsersHandler struct {

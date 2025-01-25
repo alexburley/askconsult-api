@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	sql_db "github.com/alexburley/askconsult-api/db"
 	api "github.com/alexburley/askconsult-api/internal"
-	"github.com/gorilla/mux"
 )
 
 // DBConfig creates and returns a Config instance with default values
@@ -22,24 +20,17 @@ func DBConfig() *sql_db.Config {
 }
 
 func main() {
-
 	db, err := sql_db.Init(*DBConfig())
+	defer db.Close()
 	if err != nil {
-		panic(fmt.Sprintf("db init failed: %s", err.Error()))
+		log.Fatal("db init failed:", err.Error())
 	}
 
-	createUser := &api.CreateUserHandler{DB: db}
-	listUsers := &api.ListUsersHandler{DB: db}
+	server := api.NewServer(api.ServerDeps{DB: db})
 
-	// Set up router with dependency-injected handlers
-	r := mux.NewRouter()
-	r.HandleFunc("/users", createUser.Handler).Methods("POST")
-	r.HandleFunc("/users", listUsers.Handler).Methods("GET")
-
-	// Start the server
 	port := ":8080"
-	log.Println("Server is running on port", port)
-	if err := http.ListenAndServe(port, r); err != nil {
-		log.Fatal("Server failed:", err)
+	log.Println("server is running on port", port)
+	if err := http.ListenAndServe(port, server); err != nil {
+		log.Fatal("server failed:", err)
 	}
 }
