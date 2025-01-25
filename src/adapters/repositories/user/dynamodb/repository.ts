@@ -35,8 +35,10 @@ const _UserFromDynamoDB = (Item: {
     email: new Email(Item.email),
     name: Item.name,
     status: Item.status as UserStatus,
-    hash: Item.passwordHash,
-    salt: Item.passwordSaltHash,
+    password: {
+      hash: Item.passwordHash,
+      salt: Item.passwordSaltHash
+    },
     userType: Item.userType as UserType,
     createdAt: new Date(Item.created),
     modifiedAt: new Date(Item.modified),
@@ -63,7 +65,7 @@ export class UserDynamoDBRepository implements UserRepository {
     return _UserFromDynamoDB(Item)
   }
 
-  async getByEmail(email: Email) {
+  async getByEmail(): Promise<User> {
     throw new Error('Method not implemented.')
   }
 
@@ -86,8 +88,8 @@ export class UserDynamoDBRepository implements UserRepository {
       email: user.email.value,
       name: user.name,
       status: user.status,
-      passwordHash: user.hash,
-      passwordSaltHash: user.passwordSaltHash,
+      passwordHash: user.password.hash,
+      passwordSaltHash: user.password.salt,
       userType: user.userType,
       deletedAt: user.deletedAt?.toISOString(),
       created: user.createdAt.toISOString(),

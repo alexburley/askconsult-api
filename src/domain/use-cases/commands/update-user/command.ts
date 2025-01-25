@@ -23,7 +23,8 @@ export class UpdateUserCommand {
 
   async execute(id: string, input: Partial<{ name: string }>) {
     const user = await this.users.getById(id)
-    await this.users.persist(user.update(input))
+    user.update(input)
+    await this.users.persist(user)
     return user
   }
 }

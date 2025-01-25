@@ -24,7 +24,15 @@ export class CreateUserCommand {
   }
 
   async execute(input: { name: string; email: Email }) {
-    const user = new User({ name: input.name, email: input.email })
+    const user = new User({
+      name: input.name,
+      email: input.email,
+      userType: 'CONSULTANT',
+      password: {
+        salt: '',
+        hash: '',
+      },
+    })
     await this.users.persist(user)
     return user
   }

@@ -51,10 +51,10 @@ export type UserProps = {
 export class User {
   readonly id: string
   readonly createdAt: Date
+  readonly password: Password
   name: string
   email: Email
   userType: UserType
-  password: Password
   status: UserStatus
   modifiedAt: Date
   deletedAt?: Date
@@ -64,26 +64,27 @@ export class User {
     this.name = props.name
     this.email = props.email
     this.userType = props.userType
-    this.password = props.password
+    this.password = {
+      hash: props.password.hash,
+      salt: props.password.salt
+    }
     this.status = props.status ?? UserStatuses.Active
     this.createdAt = props.createdAt ?? new Date()
     this.modifiedAt = props.modifiedAt ?? new Date()
     this.deletedAt = props.deletedAt
   }
 
-  delete(): User {
+  delete() {
     this.name = '**REDACTED**'
     this.email = new Email(`${this.id}@deleted.com`)
     this.status = UserStatuses.Deleted
     this.modifiedAt = new Date()
     this.deletedAt = new Date()
-    return this
   }
 
-  update(input: Partial<{ name: string }>): User {
+  update(input: Partial<{ name: string }>) {
     this.name = input.name ?? this.name
     this.modifiedAt = new Date()
-    return this
   }
 
   serialize(): UserDTO {

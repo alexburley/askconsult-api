@@ -48,7 +48,6 @@ export class SignupUserCommand {
 
     await this.users.persist(user)
 
-    const accessToken =
     return user
   }
 }

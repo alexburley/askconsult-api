@@ -23,7 +23,8 @@ export class DeleteUserCommand {
 
   async execute(id: string) {
     const user = await this.users.getById(id)
-    await this.users.persist(user.delete())
+    user.delete()
+    await this.users.persist(user)
     return user
   }
 }
